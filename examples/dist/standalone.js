@@ -750,7 +750,7 @@ var Select = _react2['default'].createClass({
 
 	renderLoading: function renderLoading() {
 		if (!this.props.isLoading) return;
-		if (this.props.loader) return loader;
+		if (this.props.loader) return this.props.loader;
 		return _react2['default'].createElement(
 			'span',
 			{ className: 'Select-loading-zone', 'aria-hidden': 'true' },
