@@ -459,10 +459,12 @@ const Select = React.createClass({
 
 	renderLoading () {
 		if (!this.props.isLoading) return;
-		if (this.props.loader) return this.props.loader;
+		let loader = this.props.loader
+			? this.props.loader
+			: <span className="Select-loading" />
 		return (
 			<span className="Select-loading-zone" aria-hidden="true">
-				<span className="Select-loading" />
+				{loader}
 			</span>
 		);
 	},
