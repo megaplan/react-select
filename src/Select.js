@@ -48,6 +48,7 @@ const Select = React.createClass({
 		inputProps: React.PropTypes.object,         // custom attributes for the Input
 		isLoading: React.PropTypes.bool,            // whether the Select is loading externally or not (such as options being loaded)
 		labelKey: React.PropTypes.string,           // path of the label value in option objects
+		loader: React.PropTypes.node,               // element of loader-spinner element
 		matchPos: React.PropTypes.string,           // (any|start) match the start or entire string when filtering
 		matchProp: React.PropTypes.string,          // (any|label|value) which option property to filter on
 		scrollMenuIntoView: React.PropTypes.bool,   // boolean to enable the viewport to shift so that the full menu fully visible when engaged
@@ -458,6 +459,9 @@ const Select = React.createClass({
 
 	renderLoading () {
 		if (!this.props.isLoading) return;
+		if (this.props.loader) {
+			return this.props.loader
+		}
 		return (
 			<span className="Select-loading-zone" aria-hidden="true">
 				<span className="Select-loading" />
