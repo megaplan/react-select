@@ -471,7 +471,7 @@ var Select = _react2['default'].createClass({
 		isLoading: _react2['default'].PropTypes.bool, // whether the Select is loading externally or not (such as options being loaded)
 		joinValues: _react2['default'].PropTypes.bool, // joins multiple values into a single form field with the delimiter (legacy mode)
 		labelKey: _react2['default'].PropTypes.string, // path of the label value in option objects
-		loader: _react2['default'].PropTypes.node, // node of loader-spinner element.
+		loader: _react2['default'].PropTypes.node, // element of loader-spinner element
 		matchPos: _react2['default'].PropTypes.string, // (any|start) match the start or entire string when filtering
 		matchProp: _react2['default'].PropTypes.string, // (any|label|value) which option property to filter on
 		menuBuffer: _react2['default'].PropTypes.number, // optional buffer (in px) between the bottom of the viewport and the bottom of the menu
@@ -1007,7 +1007,9 @@ var Select = _react2['default'].createClass({
 
 	renderLoading: function renderLoading() {
 		if (!this.props.isLoading) return;
-		var loader = this.props.loader ? this.props.loader : _react2['default'].createElement('span', { className: 'Select-loading' });
+		if (this.props.loader) {
+			return this.props.loader;
+		}
 		return _react2['default'].createElement(
 			'span',
 			{ className: 'Select-loading-zone', 'aria-hidden': 'true' },
