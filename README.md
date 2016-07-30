@@ -1,4 +1,4 @@
-[![NPM](https://badge.fury.io/js/react-select.png)](https://www.npmjs.com/package/react-select)
+[![NPM](https://img.shields.io/npm/v/react-select.svg)](https://www.npmjs.com/package/react-select)
 [![Build Status](https://travis-ci.org/JedWatson/react-select.svg?branch=master)](https://travis-ci.org/JedWatson/react-select)
 [![Coverage Status](https://coveralls.io/repos/JedWatson/react-select/badge.svg?branch=master&service=github)](https://coveralls.io/github/JedWatson/react-select?branch=master)
 
@@ -43,11 +43,25 @@ The easiest way to use React-Select is to install it from NPM and include it in 
 npm install react-select --save
 ```
 
-You can also use the standalone build by including `dist/react-select.js` and `dist/react-select.css` in your page. If you use this, make sure you have already included the following dependencies:
+At this point you can import react-select and its styles in your application as follows:
 
-* [React](http://facebook.github.io/react/)
-* [classNames](http://jedwatson.github.io/classnames/)
-* [react-input-autosize](https://github.com/JedWatson/react-input-autosize)
+```js
+import Select from 'react-select';
+
+// Be sure to include styles at some point, probably during your bootstrapping
+import 'react-select/dist/react-select.css';
+```
+
+You can also use the standalone build by including `react-select.js` and `react-select.css` in your page. (If you do this though you'll also need to include the dependencies.) For example:
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react-dom.min.js"></script>
+<script src="https://npmcdn.com/classnames/index.js"></script>
+<script src="https://npmcdn.com/react-input-autosize/dist/react-input-autosize.js"></script>
+<script src="https://npmcdn.com/react-select/dist/react-select.js"></script>
+
+<link rel="stylesheet" href="https://npmcdn.com/react-select/dist/react-select.css">
+```
 
 
 ## Usage
@@ -58,7 +72,7 @@ Options should be provided as an `Array` of `Object`s, each with a `value` and `
 
 The `value` property of each option should be set to either a string or a number.
 
-When the value is changed, `onChange(newValue, [selectedOptions])` will fire.
+When the value is changed, `onChange(selectedValueOrValues)` will fire.
 
 ```javascript
 var Select = require('react-select');
@@ -85,11 +99,11 @@ function logChange(val) {
 You can enable multi-value selection by setting `multi={true}`. In this mode:
 
 * Selected options will be removed from the dropdown menu
-* The values of the selected items are joined using the `delimiter` property to create the input value
-* A simple value, if provided, will be split using the `delimiter` property
-* The `onChange` event provides an array of the selected options as the second argument
-* The first argument to `onChange` is always a string, regardless of whether the values of the selected options are numbers or strings
-* By default, only options in the `options` array can be selected. Setting `allowCreate` to true allows new options to be created if they do not already exist.
+* The selected values are submitted in multiple `<input type="hidden">` fields, use `joinValues` to submit joined values in a single field instead
+* The values of the selected items are joined using the `delimiter` prop to create the input value when `joinValues` is true
+* A simple value, if provided, will be split using the `delimiter` prop
+* The `onChange` event provides an array of selected options _or_ a comma-separated string of values (eg `"1,2,3"`) if `simpleValue` is true
+* By default, only options in the `options` array can be selected. Setting `allowCreate` to true allows new options to be created if they do not already exist. *NOTE:* `allowCreate` is not implemented in `1.0.0-beta`, if you need this option please stay on `0.9.x`.
 * By default, selected options can be cleared. To disable the possibility of clearing a particular option, add `clearableValue: false` to that option:
 ```javascript
 var options = [
@@ -209,6 +223,12 @@ For multi-select inputs, when providing a custom `filterOptions` method, remembe
 
 The `menuRenderer` property can be used to override the default drop-down list of options.
 This should be done when the list is large (hundreds or thousands of items) for faster rendering.
+Windowing libraries like [`react-virtualized`](https://github.com/bvaughn/react-virtualized) can then be used to more efficiently render the drop-down menu like so.
+The easiest way to do this is with the [`react-virtualized-select`](https://github.com/bvaughn/react-virtualized-select/) HOC.
+This component decorates a `Select` and uses the react-virtualized `VirtualScroll` component to render options.
+Demo and documentation for this component are available [here](https://bvaughn.github.io/react-virtualized-select/).
+
+You can also specify your own custom renderer.
 The custom `menuRenderer` property accepts the following named parameters:
 
 | Parameter | Type | Description |
@@ -220,36 +240,21 @@ The custom `menuRenderer` property accepts the following named parameters:
 | selectValue | `Function` | Callback to select a new option; receives the option as a parameter. |
 | valueArray | `Array<Object>` | Array of currently selected options. |
 
-Windowing libraries like [`react-virtualized`](https://github.com/bvaughn/react-virtualized) can then be used to more efficiently render the drop-down menu like so:
+### Updating input values with onInputChange
+
+You can manipulate the input using the onInputChange and returning a new value.
 
 ```js
-menuRenderer({ focusedOption, focusOption, labelKey, options, selectValue, valueArray }) {
-  const focusedOptionIndex = options.indexOf(focusedOption);
-  const option = options[index];
-  const isFocusedOption = option === focusedOption;
+function cleanInput(inputValue) {
+	  // Strip all non-number characters from the input
+    return inputValue.replace(/[^0-9]/g, "");
+}   
 
-  return (
-    <VirtualScroll
-      ref="VirtualScroll"
-      height={200}
-      rowHeight={35}
-      rowRenderer={(index) => (
-        <div
-          onMouseOver={() => focusOption(option)}
-          onClick={() => selectValue(option)}
-        >
-          {option[labelKey]}
-        </div>
-      )}
-      rowsCount={options.length}
-      scrollToIndex={focusedOptionIndex}
-      width={200}
-    />
-  )
-}
+<Select
+    name="form-field-name"
+    onInputChange={cleanInput}
+/>
 ```
-
-Check out the demo site for a more complete example of this.
 
 ### Further options
 
@@ -257,16 +262,18 @@ Check out the demo site for a more complete example of this.
 	Property	|	Type		|	Default		|	Description
 :-----------------------|:--------------|:--------------|:--------------------------------
 	addLabelText	|	string	|	'Add "{label}"?'	|	text to display when `allowCreate` is true
-	autosize  | bool | true  | If enabled, the input will expand as the length of its value increases
+	allowCreate	|	bool	|	false		|	allow new options to be created in multi mode (displays an "Add \<option> ?" item when a value not already in the `options` array is entered) [NOTE: not available in 1.0.0-beta]
 	autoBlur	|	bool | false | Blurs the input element after a selection has been made. Handy for lowering the keyboard on mobile devices
-	allowCreate	|	bool	|	false		|	allow new options to be created in multi mode (displays an "Add \<option> ?" item when a value not already in the `options` array is entered)
+	autofocus       |       bool    |      undefined        |  autofocus the component on mount
 	autoload 	|	bool	|	true		|	whether to auto-load the default async options set
+	autosize  | bool | true  | If enabled, the input will expand as the length of its value increases
 	backspaceRemoves 	|	bool	|	true	|	whether pressing backspace removes the last item when there is no input value
 	cache	|	bool	|	true	|	enables the options cache for `asyncOptions` (default: `true`)
 	className 	|	string	|	undefined	|	className for the outer element
 	clearable 	|	bool	|	true		|	should it be possible to reset value
 	clearAllText 	|	string	|	'Clear all'	|	title for the "clear" control when `multi` is true
 	clearValueText 	|	string	|	'Clear value'	|	title for the "clear" control
+	resetValue 	|	any	|	null	|	value to use when you clear the control
 	delimiter 	|	string	|	','		|	delimiter to use to join multiple values
 	disabled 	|	bool	|	false		|	whether the Select is disabled or not
 	filterOption 	|	func	|	undefined	|	method to filter a single option: `function(option, filterString)`
@@ -279,30 +286,32 @@ Check out the demo site for a more complete example of this.
 	loadOptions	|	func	|	undefined	|	function that returns a promise or calls a callback with the options: `function(input, [callback])`
 	matchPos 	|	string	|	'any'		|	(any, start) match the start or entire string when filtering
 	matchProp 	|	string	|	'any'		|	(any, label, value) which option property to filter on
-	scrollMenuIntoView |	bool	|	true		|	whether the viewport will shift to display the entire menu when engaged
 	menuBuffer	|	number	|	0		|	buffer of px between the base of the dropdown and the viewport to shift if menu doesnt fit in viewport
 	menuRenderer | func | undefined | Renders a custom menu with options; accepts the following named parameters: `menuRenderer({ focusedOption, focusOption, options, selectValue, valueArray })`
 	multi 		|	bool	|	undefined	|	multi-value input
 	name 		|	string	|	undefined	|	field name, for hidden `<input />` tag
-	newOptionCreator	|	func	|	undefined	|	factory to create new options when `allowCreate` is true
+	newOptionCreator	|	func	|	undefined	|	factory to create new options when `allowCreate` is true [NOTE: not available in 1.0.0-beta]
 	noResultsText 	|	string	|	'No results found'	|	placeholder displayed when there are no matching search results or a falsy value to hide it
 	onBlur 		|	func	|	undefined	|	onBlur handler: `function(event) {}`
 	onBlurResetsInput	|	bool	|	true	|	whether to clear input on blur or not
 	onChange 	|	func	|	undefined	|	onChange handler: `function(newValue) {}`
+	onClose		|	func	|	undefined	|	handler for when the menu closes: `function () {}`
 	onFocus 	|	func	|	undefined	|	onFocus handler: `function(event) {}`
 	onInputChange	|	func	|	undefined	|	onInputChange handler: `function(inputValue) {}`
-	onValueClick	|	func	|	undefined	|	onClick handler for value labels: `function (value, event) {}`
 	onOpen		|	func	|	undefined	|	handler for when the menu opens: `function () {}`
-	onClose		|	func	|	undefined	|	handler for when the menu closes: `function () {}`
+	onValueClick	|	func	|	undefined	|	onClick handler for value labels: `function (value, event) {}`
+	openOnFocus | bool | false | open the options menu when the input gets focus (requires searchable = true)
 	optionRenderer	|	func	|	undefined	|	function which returns a custom way to render the options in the menu
 	options 	|	array	|	undefined	|	array of options
 	placeholder 	|	string\|node	|	'Select ...'	|	field placeholder, displayed when there's no value
+	scrollMenuIntoView |	bool	|	true		|	whether the viewport will shift to display the entire menu when engaged
 	searchable 	|	bool	|	true		|	whether to enable searching feature or not
 	searchingText	|	string	|	'Searching...'	|	message to display whilst options are loading via asyncOptions, or when `isLoading` is true
-	searchPromptText |	string	|	'Type to search'	|	label to prompt for search input
+	searchPromptText |	string\|node	|	'Type to search'	|	label to prompt for search input
+	tabSelectsValue	|	bool	|	true	|	whether to select the currently focused value when the `[tab]` key is pressed
 	value 		|	any	|	undefined	|	initial field value
 	valueKey	|	string	|	'value'		|	the option property to use for the value
-	valueRenderer	|	func	|	undefined	|	function which returns a custom way to render the value selected
+	valueRenderer	|	func	|	undefined	|	function which returns a custom way to render the value selected `function (option) {}`
 
 ### Methods
 

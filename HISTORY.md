@@ -1,5 +1,46 @@
 # React-Select
 
+## v1.0.0-beta14 / 2016-07-17
+
+* fixed; `react-input-autosize` has been udpated to `1.1.0`, which includes fixes for the new warnings that React 15.2 logs
+* fixed; "Unknown prop `inputClassName` on <div> tag" warning, thanks [Max Stoiber](https://github.com/mxstbr)
+* fixed; Removed unnecessary `onUnfocus`, thanks [Johnny Nguyen](https://github.com/gojohnnygo)
+* added; Support for react components in `searchPromptText`, thanks [Matt](https://github.com/hellaeon)
+* fixed; focus bug on iOS, thanks [Tony deCatanzaro](https://github.com/tonydecat)
+* fixed; Async bugs with Promises, thanks [Vladimir](https://github.com/VladimirPal) and [Ian Firkin](https://github.com/lobsteropteryx)
+* fixed; `searchingText` bug, thanks [Tony deCatanzaro](https://github.com/tonydecat)
+* improved; More antive-like input behaviour, thanks [Johnny Nguyen](https://github.com/gojohnnygo)
+* fixed; Added missing unit (px) to `minWidth` attribute, thanks [Ian Witherow](https://github.com/ianwitherow)
+* added; Support for assistive technologies, thanks [Dave Brotherstone](https://github.com/bruderstein)
+* fixed; React error if `onChange` callback causes a root component to unmount, thanks [Nathan Norton](https://github.com/Xesued)
+* fixed; Open menu is now closed if `disabled` becomes true, thanks [Jason Moon](https://github.com/jsnmoon)
+* fixed; Prevent `getFocusableOptionIndex` from returning a disabled option, thanks [Brian Powers](https://github.com/brianspowers)
+* added; Home, End, Page Up/Down support, thanks [Jason Kadrmas](https://github.com/blackjk3)
+* fixed; Don't render `backspaceToRemoveMessage` if `backspaceRemoves` is set to false, thanks [Ryan Zec](https://github.com/ryanzec)
+* fixed; Issue with an outline appearing on the auto sized input, thanks [Ryan Zec](https://github.com/ryanzec)
+* fixed; Events don't propagate when `esc` is pressed, thanks [Yoshihide Jimbo](https://github.com/jmblog)
+* fixed; Update `required` prop based on nextProps on update, thanks [Matt Shwery](https://github.com/mshwery)
+* fixed; On focus check whether input ref is a real input or an input component, thanks [Peter Brant](https://github.com/pbrant) and [Greg Poole](https://github.com/gpoole)
+
+Also a big thanks to [Brian Vaughn](https://github.com/bvaughn) for his help triaging issues for this release!
+
+## v1.0.0-beta13 / 2016-05-30
+
+* added; `inputRenderer` prop, allows you to override the input component, thanks [Sean Burke](https://github.com/leftmostcat)
+* added; `openOnFocus` prop, causes the menu to always open when the select control is focused, thanks [HuysentruytRuben](https://github.com/HuysentruytRuben)
+* added; `react-virtualised-select` HOC example, thanks [Brian Vaughn](https://github.com/bvaughn)
+* added; `tabSelectsValue` prop can be set to false to prevent selection of focused option when tab is pressed, thanks [Byron Anderson](https://github.com/byronanderson)
+* added; ability to override `resetValue` when clearing the control, thanks [Alexander Luberg](https://github.com/LubergAlexander)
+* added; input can be updated with `onInputChange`, thanks [Brett DeWoody](https://github.com/brettdewoody)
+* added; Styles for .is-selected class, thanks [Danny Herran](https://github.com/dherran)
+* fixed; `noResultsText` prop type is now `stringOrNode` for Async component, thanks [Michael Groeneman](https://github.com/mgroeneman)
+* fixed; `onInputChange` is wrapped by Async component, thanks [Eric O'Connell](https://github.com/drd)
+* fixed; `scrollMenuIntoView` behaviour in IE10, thanks [Ivan Jager](https://github.com/aij)
+* fixed; isEqualNode replaced with strict equality check, thanks [Alexandre Balhier](https://github.com/abalhier)
+* fixed; issue with value object not being passed to `handleRequired`, thanks [Andrew Hite](https://github.com/andyhite)
+* fixed; the menu-outer container is no longer rendered when it does not contain anything, thanks [Kuan](https://github.com/khankuan)
+* improved; better support for IE8 in styles, thanks [Rockallite Wulf](https://github.com/rockallite)
+
 ## v1.0.0-beta12 / 2016-04-02
 
 * added; `menuRenderer` method and example for effeciently rendering thousands of options, thanks [Brian Vaughn](https://github.com/bvaughn)
@@ -8,6 +49,8 @@
 ## v1.0.0-beta11 / 2016-03-09
 
 * updated dependencies to allow use with React 15.x
+* changed; multiple selected values are now submitted using multiple inputs, thanks [Trinh Hoang Nhu](https://github.com/james4388)
+* added; `joinValues` prop to revert the above change and submit multiple values in a single field with the delimiter
 
 ## v1.0.0-beta10 / 2016-02-23
 

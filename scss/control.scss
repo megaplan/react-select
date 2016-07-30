@@ -50,6 +50,10 @@
 	&:hover {
 		box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
 	}
+
+	.Select-input:focus {
+		outline: none;
+	}
 }
 
 .is-searchable {
@@ -82,9 +86,8 @@
 }
 
 // placeholder
-
 .Select-placeholder,
-:not(.Select--multi) > .Select-control .Select-value {
+.Select--single > .Select-control .Select-value {
 	bottom: 0;
 	color: $select-input-placeholder;
 	left: 0;
@@ -102,8 +105,8 @@
 	white-space: nowrap;
 }
 
-.has-value:not(.Select--multi):not(.is-focused) > .Select-control > .Select-value,
-.has-value.is-pseudo-focused:not(.Select--multi) > .Select-control > .Select-value {
+.has-value.Select--single > .Select-control .Select-value,
+.has-value.is-pseudo-focused.Select--single > .Select-control .Select-value {
 	.Select-value-label {
 		color: $select-text-color;
 	}
@@ -111,8 +114,10 @@
 		cursor: pointer;
 		text-decoration: none;
 
-		&:hover {
+		&:hover,
+		&:focus {
 			color: $select-link-hover-color;
+			outline: none;
 			text-decoration: underline;
 		}
 	}
@@ -136,10 +141,12 @@
 		display: inline-block;
 		font-family: inherit;
 		font-size: inherit;
-		height: $select-input-internal-height;
+		// height: $select-input-internal-height;
 		margin: 0;
 		outline: none;
-		padding: 0;
+		// padding: 0;
+		line-height: 14px;  /* For IE 8 compatibility */
+		padding: (($select-input-internal-height - 14) / 2 - 2) 0 (($select-input-internal-height - 14) / 2 + 2);  /* For IE 8 compatibility */
 		-webkit-appearance: none;
 
 		.is-focused & {
@@ -197,6 +204,18 @@
 }
 .Select--multi .Select-clear-zone {
 	width: $select-clear-width;
+}
+
+.Select--multi .Select-multi-value-wrapper {
+  display: inline-block;
+}
+.Select .Select-aria-only {
+	display: inline-block;
+	height: 1px;
+	width: 1px;
+	margin: -1px;
+	clip: rect(0,0,0,0);
+	overflow: hidden;
 }
 
 
